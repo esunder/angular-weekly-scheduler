@@ -79,6 +79,33 @@ You can set an `editable` variable on each item, that will be used to disable it
   ]
 }, ...]
 ```
+### Options
+The following options are supported and can be passed to the directive.
+```javascript
+$scope.model = {
+  locale: "en-us",
+  options: {
+    useStaticDates: true,
+    minDate: moment('2018-05-15'),
+    maxDate: moment('2018-09-15')
+  },
+  items: [
+    {
+      label: 'Item 1',
+      editable: false,
+      schedules: [
+           {start: moment('2018-07-04').toDate(), end: moment('2018-07-18').toDate()}
+      ]
+    }
+  ]
+};
+```
+#### useStaticDates
+Use this option in conjunction with minDate/maxDate to define the date range that will be displayed.
+#### minDate
+The minimum date to display on the timeline
+#### maxDate
+The maximum date to display on the timeline
 
 ### Transclusion
 
