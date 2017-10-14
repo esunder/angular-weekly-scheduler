@@ -17,15 +17,20 @@ angular.module('weeklyScheduler')
     function config(schedules, options) {
       var now = moment();
 
-      // Calculate min date of all scheduled events
-      var minDate = (schedules ? schedules.reduce(function (minDate, slot) {
-        return timeService.compare(slot.start, 'isBefore', minDate);
-      }, now) : now).startOf('week');
+      var minDate = options.minDate;
+      var maxDate = options.maxDate;
 
-      // Calculate max date of all scheduled events
-      var maxDate = (schedules ? schedules.reduce(function (maxDate, slot) {
-        return timeService.compare(slot.end, 'isAfter', maxDate);
-      }, now) : now).clone().add(1, 'year').endOf('week');
+      if (!options.useStaticDates) {
+        // Calculate min date of all scheduled events
+        minDate = (schedules ? schedules.reduce(function (minDate, slot) {
+          return timeService.compare(slot.start, 'isBefore', minDate);
+        }, now) : now).startOf('week');  
+        
+        // Calculate max date of all scheduled events
+        maxDate = (schedules ? schedules.reduce(function (maxDate, slot) {
+          return timeService.compare(slot.end, 'isAfter', maxDate);
+        }, now) : now).clone().add(1, 'year').endOf('week');
+      }
 
       // Calculate nb of weeks covered by minDate => maxDate
       var nbWeeks = timeService.weekDiff(minDate, maxDate);
@@ -88,8 +93,12 @@ angular.module('weeklyScheduler')
               );
             }, []), options);
 
-            // Then resize schedule area knowing the number of weeks in scope
-            el.firstChild.style.width = schedulerCtrl.config.nbWeeks / 53 * 200 + '%';
+            if(schedulerCtrl.config.useStaticDates) {
+              el.firstChild.style.width = '100%';
+            } else {
+              // Then resize schedule area knowing the number of weeks in scope
+              el.firstChild.style.width = schedulerCtrl.config.nbWeeks / 53 * 200 + '%';
+            }
 
             // Finally, run the sub directives listeners
             schedulerCtrl.$modelChangeListeners.forEach(function (listener) {
